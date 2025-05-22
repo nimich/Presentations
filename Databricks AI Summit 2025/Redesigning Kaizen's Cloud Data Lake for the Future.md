@@ -66,6 +66,23 @@ challenges revisited.
 
 ## Migration 
 
+Having a new architecture meant we needed to propose and execute plan on how to transition our existing data lake-house 
+to the new architecture.
+
+Our approach was to break down the migration into three key phases:
+
+**Pre migration** Where we needed to decide upon the security and governance model, formalize our overall design 
+by specifying conventions and specification and evaluate our existing limitations and blockers regarding existing infrastructure.
+For example our pipeline orchestration which was a custom framework needed to be refactored to support multiple dependencies across 
+workspaces.
+**Migration** For the migration phase we needed to execute a plan that would allow teams to migrate at their own pace 
+without causing disruption to the business stakeholders. The idea here was to propose an approach that does not require 
+an simultaneous approach of all teams to the new architecture. As domain teams are resp migrate their own data e need to create tooling for teams 
+that that hides the complexity of this phased approached. 
+
+
+
+
 
 ## Conclusion 
 
