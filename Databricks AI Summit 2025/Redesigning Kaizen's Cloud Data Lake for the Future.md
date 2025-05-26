@@ -66,19 +66,49 @@ challenges revisited.
 
 ## Migration 
 
-Having a new architecture meant we needed to propose and execute plan on how to transition our existing data lake-house 
-to the new architecture.
 
-Our approach was to break down the migration into three key phases:
+Adopting a new architecture required us to propose and execute a clear plan for transitioning our existing data lakehouse 
+to the new environment.
 
-**Pre migration** Where we needed to decide upon the security and governance model, formalize our overall design 
-by specifying conventions and specification and evaluate our existing limitations and blockers regarding existing infrastructure.
-For example our pipeline orchestration which was a custom framework needed to be refactored to support multiple dependencies across 
-workspaces.
-**Migration** For the migration phase we needed to execute a plan that would allow teams to migrate at their own pace 
-without causing disruption to the business stakeholders. The idea here was to propose an approach that does not require 
-an simultaneous approach of all teams to the new architecture. As domain teams are resp migrate their own data e need to create tooling for teams 
-that that hides the complexity of this phased approached. 
+We approached the migration in three key phases:
+
+**Pre migration** 
+In this phase, we defined the security and governance model and formalized our overall architecture by establishing 
+conventions and resource specifications. We also assessed current limitations and blockers within the existing infrastructure.
+For example, our custom-built pipeline orchestration framework needed to be refactored to support multiple dependencies
+across workspaces.
+
+**Migration**
+During the migration phase, our goal was to enable teams to migrate at their own pace without disrupting business stakeholders.
+Rather than enforcing a simultaneous migration across all teams, we proposed a decoupled approach, allowing each team to
+manage their own migration timeline.
+To support this, the platform team developed tools that abstracted the complexity of a phased migration and ensured 
+consistency across environments. Additionally, we were responsible for provisioning the necessary infrastructure,
+building supporting tools, and assisting teams in migrating their data and applications.
+During migration the data platfrom team was required to create the infrastructure for all teams, provide the necessary 
+tooling and support teams to migrate their data and applications.
+
+**Post Migration** 
+Once teams had migrated their pipelines and data to the new infrastructure, we focused on ensuring there was no performance
+degradation compared to the previous architecture.
+Migration also served as the foundation for cost optimization. With our new cost monitoring in place, 
+we began implementing strategies such as policy-based cold tier storage, compute and storage reservations
+and premium storage for streaming applications.
+
+
+### Security 
+
+A key principle of our new architecture was security by design. Given its decentralized nature, it was essential 
+to ensure that our security model aligned with this structure.
+Following established best practices, we defined the critical roles and responsibilities from an administrative perspective.
+This resulted in the creation of three distinct administrative groups responsible for account management, workspace management,
+and metastore management.
+For access control and delegation, we adopted Group-Based Access Control (GBAC). This involved syncing our cloud provider's
+Identity and Access Management (IAM) system with Databricks Groups and Roles using SCIM (System for Cross-domain Identity
+Management) provisioning. This setup enabled teams to manage privileges by simply updating their respective cloud provider 
+groups. To ensure consistency and control in production environments, we enforced the use of service accounts 
+(referred to as Service Principals in Azure IAM). These accounts were exclusively responsible for executing production 
+workloads, writing data, and provisioning resources, tailored to each team’s operational maturity.
 
 
 
