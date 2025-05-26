@@ -62,13 +62,13 @@ on-time and quality data for insights without barriers.
 
 Databricks is hosted as a Service in the environments of all big Cloud Providers - AWS, Azure and GCP.
 The choice of any of those providers does not matter that much, since on all of them the setup of databricks is similar.
-A well architected cloud setup can be achieved using the **Cloud Adoption Framework** which is a set of tooling and documentation that helps to create an implementation using best practises.
-Kaizen's Cloud Architecture is using Azure and their CAF implementation which is based on Terraform, the most common Infrastructure as Code tool.
-The key element of CAF in any provider is a **Landing Zone** which is a container for cloud resources.
+A [well architected](https://learn.microsoft.com/en-us/azure/well-architected/what-is-well-architected-framework#audience) cloud setup can be achieved using the [Cloud Adoption Framework](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/overview) which is a set of tooling and documentation that helps to create an implementation using best practises.
+Kaizen's Cloud Architecture is using Azure and their CAF implementation which is based on [Terraform](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale?tab=readme-ov-file#overview), the most common Infrastructure as Code tool.
+The key element of CAF in any provider is a [Landing Zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/) which is a container for cloud resources.
 Relevant to our case here are the Data Landing Zones, containing data and workspaces, and the Data Management Landing Zone containing unity catalog resources.
-In the context of Azure Cloud, a Landing Zone is implemented using a "Subscription".
+In the context of Azure Cloud, a Landing Zone is implemented using a **Subscription**.
 
-The hierarchy of cloud resources in Azure consists of the following high level elements:
+The hierarchy of cloud resources in Azure consists of the following high level [elements](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/considerations/fundamental-concepts#azure-terminology):
 
 * Tenant : Represents a dedicated identity and access management service
 * Subscription : Container for Resources. Allows Isolation of Quotas and Billing
