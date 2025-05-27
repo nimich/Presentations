@@ -97,8 +97,15 @@ Also, since we had witnessed the expanding costs of having a common storage with
 So now we needed to decide on storage parameters such as performance, replication and redundancy for each case.
 And for all the above, we needed to take into consideration, not only the current situation, but also the constant growth so that we remain future proof.
 
+### New Architecture
 
-New architecture (zoomed-in and zoomed-out), challenges revisited.
+In the new Architecture, having security in mind, we completely isolated production from other environments so an Azure Tenant was created specifically for production workloads and another Tenant for all other environments (dev, stg, uat, etc).
+In each Tenant a Data Management Landing Zone was created to host the Unity Catalog and Metastore resources for Databricks.
+Also multiple Data Landing zones were created, each related to different Line of Business Department and Environment.
+In each Data Landing Zone, Resource Groups were used to logically isolate the resources of teams in each Department and if needed a Common Resource Group was created to host resources needed by all teams of a Department.
+In each of these Team Resource Groups, the Databricks workspace and Key Vaults of the team were created together with the storage accounts hosting their catalogs. There might be multiple storages with the best configuration suiting the type of data in each case.
+
+New architecture (zoomed-out), challenges revisited.
 
 ## Migration 
 
