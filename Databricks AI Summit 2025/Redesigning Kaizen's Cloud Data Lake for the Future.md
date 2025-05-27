@@ -60,9 +60,45 @@ on-time and quality data for insights without barriers.
 
 ## Architecture 
 
-CAF, Data Landing zones, Hierachy, Old architecture, Design considerations, New architecture (zoomed-in and zoomed-out), 
-challenges revisited.
+### Cloud Adoption Framework and Resource Hierarchy
 
+Databricks is hosted as a Service in the environments of all big Cloud Providers - AWS, Azure and GCP.
+The choice of any of those providers does not matter that much, since on all of them the setup of databricks is similar.
+A [well architected](https://learn.microsoft.com/en-us/azure/well-architected/what-is-well-architected-framework#audience) cloud setup can be achieved using the [Cloud Adoption Framework](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/overview) which is a set of tooling and documentation that helps to create an implementation using best practises.
+Kaizen's Cloud Architecture is using Azure and their CAF implementation which is based on [Terraform](https://github.com/Azure/terraform-azurerm-caf-enterprise-scale?tab=readme-ov-file#overview), the most common Infrastructure as Code tool.
+The key element of CAF in any provider is a [Landing Zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/) which is a container for cloud resources.
+Relevant to our case here are the Data Landing Zones, containing data and workspaces, and the Data Management Landing Zone containing unity catalog resources.
+In the context of Azure Cloud, a Landing Zone is implemented using a **Subscription**.
+
+The hierarchy of cloud resources in Azure consists of the following high level [elements](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/considerations/fundamental-concepts#azure-terminology):
+
+* Tenant : Represents a dedicated identity and access management service
+* Subscription : Container for Resources. Allows Isolation of Quotas and Billing
+* Resource Group : Logical containers used to group related resources in a subscription
+* Resources : Entities managed by Azure ex. Storage Account, virtual network, Databricks workspace, etc
+
+### Old Architecture Challenges and Design Considerations
+
+In our old Cloud Architecture a single Azure tenant and a common subscription were used to host all our resources.
+This caused problems with Overlapping Quotas.
+Also a common storage was used for all our data regardless of their type.
+Additionally, since we started small and expanded fast, all resources were created manually using the Azure Portal.
+For all these reasons cost attribution and of course scaling were really difficult.
+
+On our new approach, following the guidelines of the Cloud Adoption Framework for Azure, we separated our workloads to multiple Landing Zones.
+The separation was based on differentiation of Environments and Lines of Business.
+The result was to avoid quota overlap problems and to achieve a clearer cost attribution.
+But there were some things to consider in this new setup.
+We needed multiple Databricks Workspaces, but going too far meant hitting the (soft in Azure) [limit](https://www.databricks.com/blog/2022/03/10/functional-workspace-organization-on-databricks.html) of 50 workspaces per tenant.
+Also, we needed to decide the sizing of networks used for the workspaces.
+A small network would not allow many nodes to run concurrently, but a too big network would cause a waste of IP addresses.
+Based on the above we also needed to decide on the Resource Synergy and how we should break up the available workspaces, key vaults, storages, etc.
+Also, since we had witnessed the expanding costs of having a common storage with a single configuration, we proceeded to create multiple of them with different configurations.
+So now we needed to decide on storage parameters such as performance, replication and redundancy for each case.
+And for all the above, we needed to take into consideration, not only the current situation, but also the constant growth so that we remain future proof.
+
+
+New architecture (zoomed-in and zoomed-out), challenges revisited.
 
 ## Migration 
 
