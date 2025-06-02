@@ -105,10 +105,22 @@ Also multiple Data Landing zones were created, each related to different Line of
 In each Data Landing Zone, Resource Groups were used to logically isolate the resources of teams in each Department and if needed a Common Resource Group was created to host resources needed by all teams of a Department.
 In each of these Team Resource Groups, the Databricks workspace and Key Vaults of the team were created together with the storage accounts hosting their catalogs. There might be multiple storages with the best configuration suiting the type of data in each case.
 
-New architecture (zoomed-out), challenges revisited.
+A department team has RGs with workspaces (and other resources) in multiple Data Landing Zones, each used as a separate environment.
+There is an environment for teams to develop their jobs directly in the workspaces and the final code is commited to a git repository.
+A staging environment is then used for End-to-End testing utilizing Databricks Asset Bundles for deployment through CI/CD pipelines.
+Production data can be consumed in this procedure if needed by utilizing Delta Shares among the tenants.
+Being read-only, the Delta Shares ensure that no data disaster will occur while testing!
+Finally a Merge Request and Approval process takes place that leads through CI/CD to a production deployment.
 
-## Migration 
+### Challenges Revisited
 
+What did we achieve with the New Architecture.
+Increased scalability, with boundaries setting and quota separation.
+FinOps Improvements with Cost transparency and Optimization due to resource flexibility.
+Governance with Access control and Isolation of Sensitive Data as well as Resource Standardization and Change Management.
+And all this leading us closer to our goal of achieving Data Democratization.
+
+## Migration
 
 Adopting a new architecture required us to propose and execute a clear plan for transitioning our existing data lakehouse 
 to the new environment.
@@ -137,7 +149,6 @@ degradation compared to the previous architecture.
 Migration also served as the foundation for cost optimization. With our new cost monitoring in place, 
 we began implementing strategies such as policy-based cold tier storage, compute and storage reservations
 and premium storage for streaming applications.
-
 
 ### Security 
 
