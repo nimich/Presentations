@@ -112,10 +112,15 @@ Production data can be consumed in this procedure if needed by utilizing Delta S
 Being read-only, the Delta Shares ensure that no data disaster will occur while testing!
 Finally a Merge Request and Approval process takes place that leads through CI/CD to a production deployment.
 
-TODO: challenges revisited.
+### Challenges Revisited
 
-## Migration 
+What did we achieve with the New Architecture.
+Increased scalability, with boundaries setting and quota separation.
+FinOps Improvements with Cost transparency and Optimization due to resource flexibility.
+Governance with Access control and Isolation of Sensitive Data as well as Resource Standardization and Change Management.
+And all this leading us closer to our goal of achieving Data Democratization.
 
+## Migration
 
 Adopting a new architecture required us to propose and execute a clear plan for transitioning our existing data lakehouse 
 to the new environment.
@@ -144,7 +149,6 @@ degradation compared to the previous architecture.
 Migration also served as the foundation for cost optimization. With our new cost monitoring in place, 
 we began implementing strategies such as policy-based cold tier storage, compute and storage reservations
 and premium storage for streaming applications.
-
 
 ### Security 
 
