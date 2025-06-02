@@ -153,8 +153,33 @@ groups. To ensure consistency and control in production environments, we enforce
 (referred to as Service Principals in Azure IAM). These accounts were exclusively responsible for executing production 
 workloads, writing data, and provisioning resources, tailored to each team’s operational maturity.
 
+The actual migration consisted of three distinct areas to cover: Infrastructure, Data and Applications.
+
+### Infrastructure
+
+Our approach here was to setup everything as Infrastructure as Code (IaC) using Terraform.
+We wanted to create everything as modular and reusable as possible, so we opted to create centralized [Terraform modules](https://developer.hashicorp.com/terraform/language/modules).
+These approach helped us to hide the complexity of each component and provide simple interfaces. Centralizing components  
+is also a known pattern to reduce [change amplification](https://en.wikiversity.org/wiki/Software_Design/Change_amplification#:~:text=Change%20amplification%20is%20defined%20by,modifications%20in%20many%20different%20places.)
+which a usual symptom of complexity in software development.
+
+The Data platform team created Modules for landing zone level resources like resource groups or subscriptions, Databricks 
+account level like Catalogs and Workspaces, and Databricks workspace level like clusters.
 
 
+### Code 
+
+To migrate our application we leveraged the Databricks Asset Bundles. This feature, which is basically a 
+wrapper for Teraform allowed us to handle deployments to mutliple envrironments while centralizing 
+the configurations to a single file.  For example we could define Databricks Runtime versions, cluster policies
+and default catalogs per environment for all jobs of an enviroment. Also we used Databricks Volumes as a source 
+of all our artifacts and configurations files which was priviously stored in Databricks File System (DBFS).
+
+### Data
+
+**Limitations**
+
+**Solution**
 
 
 ## Conclusion 
