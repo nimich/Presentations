@@ -198,25 +198,24 @@ replacing our previous reliance on the Databricks File System (DBFS).
 
 ### Data
 
-The most critical part in the migration was the moving the data from the old architecture to the new one.
-The scale of the data was a significant challenge (over 20.000 tables and 2 Petabytes of data) so we needed
-to have a decentralized approach and allow teams to migrate at their own pace. 
+he most critical part of the migration was transferring data from the old architecture to the new one. 
+The scale posed a major challenge—over 20,000 tables and 2 petabytes of data—which required a decentralized approach 
+to allow teams to migrate at their own pace.
 
-We wanted our approach to not create any disruption to business stakeholders, so we proposed an approach where the data 
-are availaible in both the old and new architecture until the teams are ready to switch.
+To avoid disruption for business stakeholders, we adopted a dual-access strategy, making data available in both the 
+old and new architectures until teams were ready to fully transition.
 
-To achieve this we used a combination of Delta Sharing and are internal tooling. Our number one goal was to keep 
-stable the dependencies of downstream users and applications. 
+To implement this, we used a combination of Delta Sharing and our internal tooling, with our top priority being 
+to preserve stable dependencies for downstream users and applications.
 
-So our approach to migrate a table was 
-- Each table is availiable in old and new metastore for reading
-- This possible using delta sharing and creating views on top of shares which maintins the same table name
-- When we want to migrate data we use the share as source for delta clone to sync to a temp table
-- Then we drop the view in new tenant and rename the temp table to the original table name
-- We go back in the old arhcive the old table and create aview of the table pointing in the new tenant usign a seperate delta share
+Our table migration process followed these steps:
 
+- Each table was made available for reading in both the old and new metastores.
+- This was achieved using Delta Sharing, with views created on top of shared data to maintain consistent table names.
+- When initiating migration, we used the Delta share as the source for a Delta clone, syncing the data to a temporary table in the new environment.
+- Once the sync was complete, we dropped the view in the new tenant and renamed the temporary table to the original table name.
+- In the old environment, the original table was archived, and a new view was created pointing to the table in the new tenant via a separate Delta Share.
 
 ## Conclusion 
 
-Results, 
-problems 
+Lessons learned ...
