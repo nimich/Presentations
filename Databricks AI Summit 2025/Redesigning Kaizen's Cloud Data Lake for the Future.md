@@ -91,6 +91,7 @@ The result was to avoid quota overlap problems and to achieve a clearer cost att
 But there were some things to consider in this new setup.
 We needed multiple Databricks Workspaces, but going too far meant hitting the (soft in Azure) [limit](https://www.databricks.com/blog/2022/03/10/functional-workspace-organization-on-databricks.html) of 50 workspaces per tenant.
 Also, we needed to decide the sizing of networks used for the workspaces.
+
 A small network would not allow many nodes to run concurrently, but a too big network would cause a waste of IP addresses.
 Based on the above we also needed to decide on the Resource Synergy and how we should break up the available workspaces, key vaults, storages, etc.
 Also, since we had witnessed the expanding costs of having a common storage with a single configuration, we proceeded to create multiple of them with different configurations.
@@ -137,6 +138,7 @@ across workspaces.
 During the migration phase, our goal was to enable teams to migrate at their own pace without disrupting business stakeholders.
 Rather than enforcing a simultaneous migration across all teams, we proposed a decoupled approach, allowing each team to
 manage their own migration timeline.
+
 To support this, the platform team developed tools that abstracted the complexity of a phased migration and ensured 
 consistency across environments. Additionally, we were responsible for provisioning the necessary infrastructure,
 building supporting tools, and assisting teams in migrating their data and applications.
@@ -152,45 +154,66 @@ and premium storage for streaming applications.
 
 ### Security 
 
-A key principle of our new architecture was security by design. Given its decentralized nature, it was essential 
-to ensure that our security model aligned with this structure.
-Following established best practices, we defined the critical roles and responsibilities from an administrative perspective.
-This resulted in the creation of three distinct administrative groups responsible for account management, workspace management,
-and metastore management.
-For access control and delegation, we adopted Group-Based Access Control (GBAC). This involved syncing our cloud provider's
-Identity and Access Management (IAM) system with Databricks Groups and Roles using SCIM (System for Cross-domain Identity
-Management) provisioning. This setup enabled teams to manage privileges by simply updating their respective cloud provider 
-groups. To ensure consistency and control in production environments, we enforced the use of service accounts 
-(referred to as Service Principals in Azure IAM). These accounts were exclusively responsible for executing production 
-workloads, writing data, and provisioning resources, tailored to each team’s operational maturity.
+A core principle of our new architecture was security by design. 
+Given its decentralized nature, it was crucial to ensure that our security model aligned with this structure.
+
+Following best practices, we clearly defined administrative roles and responsibilities, resulting in three distinct groups:
+Account Management
+Workspace Management
+Metastore Management
+For access control and delegation, we implemented Group-Based Access Control (GBAC). 
+This involved syncing our cloud provider’s Identity and Access Management (IAM) system with Databricks Groups and Roles
+via SCIM (System for Cross-domain Identity Management) provisioning. This integration allowed teams to manage privileges 
+simply by updating their corresponding cloud groups.
+
+To maintain consistency and control in production environments, we enforced the use of service accounts 
+(known as Service Principals in Azure IAM). These accounts were solely responsible for executing production workloads,
+writing data, and provisioning resources—customized to match each team’s level of operational maturity.
 
 The actual migration consisted of three distinct areas to cover: Infrastructure, Data and Applications.
 
 ### Infrastructure
 
-Our approach here was to setup everything as Infrastructure as Code (IaC) using Terraform.
-We wanted to create everything as modular and reusable as possible, so we opted to create centralized [Terraform modules](https://developer.hashicorp.com/terraform/language/modules).
-These approach helped us to hide the complexity of each component and provide simple interfaces. Centralizing components  
-is also a known pattern to reduce [change amplification](https://en.wikiversity.org/wiki/Software_Design/Change_amplification#:~:text=Change%20amplification%20is%20defined%20by,modifications%20in%20many%20different%20places.)
-which a usual symptom of complexity in software development.
+Our approach was to implement everything as Infrastructure as Code (IaC) using Terraform. 
+To maximize modularity and reusability, we developed centralized Terraform modules.
+This strategy helped abstract the complexity of each component behind simple, well-defined interfaces.
+Centralizing components is also a well-established pattern for reducing change amplification, 
+a common symptom of software complexity that can lead to widespread, hard-to-manage changes.
 
-The Data platform team created Modules for landing zone level resources like resource groups or subscriptions, Databricks 
-account level like Catalogs and Workspaces, and Databricks workspace level like clusters.
+The Data Platform team created modules for:
+
+Landing zone-level resources, such as resource groups and subscriptions
+Databricks account-level components, including catalogs and workspaces
+Workspace-level infrastructure, such as clusters and related settings
 
 
 ### Code 
 
-To migrate our application we leveraged the Databricks Asset Bundles. This feature, which is basically a 
-wrapper for Teraform allowed us to handle deployments to mutliple envrironments while centralizing 
-the configurations to a single file.  For example we could define Databricks Runtime versions, cluster policies
-and default catalogs per environment for all jobs of an enviroment. Also we used Databricks Volumes as a source 
-of all our artifacts and configurations files which was priviously stored in Databricks File System (DBFS).
+To migrate our application, we leveraged Databricks Asset Bundles, a feature that essentially wraps Terraform to simplify
+deployments across multiple environments. This approach allowed us to centralize configuration in a single file, 
+streamlining environment-specific settings. For example, we could define Databricks Runtime versions, cluster policies
+and default catalogs per environment, applying them consistently across all jobs. 
+Additionally, we used Databricks Volumes as the source for all artifacts and configuration files, 
+replacing our previous reliance on the Databricks File System (DBFS).
 
 ### Data
 
-**Limitations**
+The most critical part in the migration was the moving the data from the old architecture to the new one.
+The scale of the data was a significant challenge (over 20.000 tables and 2 Petabytes of data) so we needed
+to have a decentralized approach and allow teams to migrate at their own pace. 
 
-**Solution**
+We wanted our approach to not create any disruption to business stakeholders, so we proposed an approach where the data 
+are availaible in both the old and new architecture until the teams are ready to switch.
+
+To achieve this we used a combination of Delta Sharing and are internal tooling. Our number one goal was to keep 
+stable the dependencies of downstream users and applications. 
+
+So our approach to migrate a table was 
+- Each table is availiable in old and new metastore for reading
+- This possible using delta sharing and creating views on top of shares which maintins the same table name
+- When we want to migrate data we use the share as source for delta clone to sync to a temp table
+- Then we drop the view in new tenant and rename the temp table to the original table name
+- We go back in the old arhcive the old table and create aview of the table pointing in the new tenant usign a seperate delta share
 
 
 ## Conclusion 
