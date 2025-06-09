@@ -4,7 +4,7 @@
 
 ### About Kaizen Gaming 
 
-Kaizen Gaming is a GameTech company that operates in online gaming and sports betting industry.
+[Kaizen Gaming](https://kaizengaming.com/home) is a GameTech company that operates in online gaming and sports betting industry.
 It has a presence globally under the commercial brand Betano on 18 countries as of 2025. 
 Having over 13 million active users and offering 1.5 million gaming events yearly a huge amount of business data are generated each day.
 Over 400 million transactions are generated daily while on peak service, over 700 thousand transactions are precessed per minute.
@@ -24,17 +24,17 @@ data teams to build their own data products by providing tool, services and infr
 Kaizen's data lake-house architecture spans several years of lifetime and this meant that earlier decisions that where made  
 with different constraints and requirements are now outdated. Some of the earliest decisions were made to balance on time delivery 
 of business value, so this meant that scoping and prioritizing was done with a focus on the business needs. 
-These led to the accumulation of technical debt and the eventual need to refactor the architecture to meet Kaizen 
+These led to the accumulation of [technical debt](https://en.wikipedia.org/wiki/Technical_debt) and the eventual need to refactor the architecture to meet Kaizen 
 new scale and ambitions.
 
 The challenges faced by the data platform primarily stem from  resource coupling and the way our infrastructure was originally set up.  
 - **Quotas**: Critical resources such as storage and compute were shared across multiple teams, resulting in contention
-for key quotas (e.g., maximum network IPs, maximum I/O operations per second). These shared limits affected multiple teams and environments.
+for key [quotas](https://learn.microsoft.com/en-us/azure/quotas/quotas-overview) (e.g., maximum network IPs, maximum I/O operations per second). These shared limits affected multiple teams and environments.
 - **Software Development Life Cycle (SDLC)** Storage was also a shared resource. A single storage account served all environments (Dev, Staging, Prod)
 and was used by multiple teams, which made true environment isolation impossible. Developers had to workaround this limitation
 to test their applications safely.
 - **Cost transparency**:  Due to the shared nature of core resources, attributing costs to specific teams or projects was difficult.
-Accurate cost tracking relied heavily on custom tagging and policies, which were often inconsistent or incomplete.
+Accurate cost [allocation](https://www.finops.org/framework/capabilities/allocation/) relied heavily on custom tagging and policies, which were often inconsistent or incomplete.
 - **Governance**: Fine-grained access control was challenging to implement, as it had to be retrofitted onto an 
 existing architecture rather than being designed into it from the start.
 - **Environment provisioning**: While we established separate compute environments for Dev, Staging, and Prod, 
@@ -115,11 +115,12 @@ Finally a Merge Request and Approval process takes place that leads through CI/C
 
 ### Challenges Revisited
 
-What did we achieve with the New Architecture.
-Increased scalability, with boundaries setting and quota separation.
-FinOps Improvements with Cost transparency and Optimization due to resource flexibility.
-Governance with Access control and Isolation of Sensitive Data as well as Resource Standardization and Change Management.
-And all this leading us closer to our goal of achieving Data Democratization.
+Reexamining our past challenges, we can see that the new architecture addresses them effectively.
+Scalability was increased through the introduction of clear boundaries and the separation of quotas across teams and environments.
+FinOps practices were improved by enabling cost transparency and decoupling costs between teams.
+Governance was strengthened with enhanced access control, isolation of sensitive data, standardization of resources, 
+and more reliable change management.
+These advancements collectively moved the organization closer to the goal of achieving data democratization.
 
 ## Migration
 
@@ -157,7 +158,8 @@ and premium storage for streaming applications.
 A core principle of our new architecture was security by design. 
 Given its decentralized nature, it was crucial to ensure that our security model aligned with this structure.
 
-Following best practices, we clearly defined administrative roles and responsibilities, resulting in three distinct groups:
+Following best practices, we clearly defined administrative roles and responsibilities, resulting 
+in [three distinct groups](https://www.databricks.com/blog/2022/08/26/databricks-workspace-administration-best-practices-for-account-workspace-and-metastore-admins.html):
 Account Management
 Workspace Management
 Metastore Management
@@ -175,9 +177,9 @@ The actual migration consisted of three distinct areas to cover: Infrastructure,
 ### Infrastructure
 
 Our approach was to implement everything as Infrastructure as Code (IaC) using Terraform. 
-To maximize modularity and reusability, we developed centralized Terraform modules.
+To maximize modularity and reusability, we developed centralized [Terraform modules](https://developer.hashicorp.com/terraform/language/modules).
 This strategy helped abstract the complexity of each component behind simple, well-defined interfaces.
-Centralizing components is also a well-established pattern for reducing change amplification, 
+Centralizing components is also a well-established pattern for reducing [change amplification](https://en.wikiversity.org/wiki/Software_Design/Change_amplification), 
 a common symptom of software complexity that can lead to widespread, hard-to-manage changes.
 
 The Data Platform team created modules for:
@@ -189,7 +191,8 @@ Workspace-level infrastructure, such as clusters and related settings
 
 ### Code 
 
-To migrate our application, we leveraged Databricks Asset Bundles, a feature that essentially wraps Terraform to simplify
+To migrate our application, we leveraged [Databricks Asset Bundles](https://docs.databricks.com/aws/en/dev-tools/bundles/), 
+a feature that essentially wraps Terraform to simplify
 deployments across multiple environments. This approach allowed us to centralize configuration in a single file, 
 streamlining environment-specific settings. For example, we could define Databricks Runtime versions, cluster policies
 and default catalogs per environment, applying them consistently across all jobs. 
