@@ -198,7 +198,7 @@ replacing our previous reliance on the Databricks File System (DBFS).
 
 ### Data
 
-he most critical part of the migration was transferring data from the old architecture to the new one. 
+Τhe most critical part of the migration was transferring data from the old architecture to the new one. 
 The scale posed a major challenge—over 20,000 tables and 2 petabytes of data—which required a decentralized approach 
 to allow teams to migrate at their own pace.
 
@@ -216,6 +216,14 @@ Our table migration process followed these steps:
 - Once the sync was complete, we dropped the view in the new tenant and renamed the temporary table to the original table name.
 - In the old environment, the original table was archived, and a new view was created pointing to the table in the new tenant via a separate Delta Share.
 
+By using this approach, we ensured minimal disruption to business stakeholders. Data remained accessible in both architectures
+throughout the migration, allowing teams to transition at their own pace.
+
 ## Conclusion 
 
-Lessons learned ...
+By adopting a new architecture, we successfully addressed the limitations of our previous lakehouse design and established
+a foundation for a scalable, secure, and cost efficient data platform.
+
+The migration process played a key role in decoupling team dependencies, enabling teams to work more independently 
+and efficiently. As a result, more than 20 teams at Kaizen have already onboarded to the new architecture, 
+with a goal of reaching 30 teams by the end of the year.
